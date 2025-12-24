@@ -145,3 +145,41 @@ button:hover {
   text-decoration: line-through;
   color: #888;
 }
+
+/* Meta row: deadline + priority */
+.meta-row {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.deadline-row,
+.priority-row {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+
+#priority {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Badge priority */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  margin-left: 6px;
+  white-space: nowrap;
+  border: 1px solid #ddd;
+}
+
+.badge.low { background: #e8f5e9; }
+.badge.medium { background: #fff8e1; }
+.badge.high { background: #ffebee; border-color: #ffcdd2; }

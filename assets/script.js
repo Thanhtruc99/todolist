@@ -1,12 +1,14 @@
+// Lấy các phần tử HTML cần thiết
 const taskInput = document.getElementById('new-task');
 const deadlineInput = document.getElementById('deadline');
+const priorityInput = document.getElementById('priority');
 const addTaskButton = document.getElementById('add-task');
 const taskList = document.getElementById('task-list');
 
 const sortAscButton = document.getElementById('sort-asc');
-/*const sortDescButton = document.getElementById('sort-desc');*/
+const sortDescButton = document.getElementById('sort-desc');
 const sortTimeAscButton = document.getElementById('sort-time-asc');
-/*const sortTimeDescButton = document.getElementById('sort-time-desc');*/
+const sortTimeDescButton = document.getElementById('sort-time-desc');
 
 // Filter buttons
 const filterAllBtn = document.getElementById('filter-all');
@@ -15,13 +17,13 @@ const filterUpcomingBtn = document.getElementById('filter-upcoming');
 const filterOverdueBtn = document.getElementById('filter-overdue');
 const filterNoneBtn = document.getElementById('filter-none');
 
-// Lấy dữ liệu từ LocalStorage
+// Lấy dữ liệu từ LocalStorage (nếu có)
 let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
 
 // trạng thái filter
 let currentFilter = 'all';
 
-/* ========= FORMAT =========
+/* ========= FORMAT: đồng bộ ngày tháng =========
    - Created at: DD/MM/YYYY HH:mm
    - Deadline:   DD/MM/YYYY
 */
@@ -40,7 +42,7 @@ function formatDateOnly(ymd) {
   return `${d}/${m}/${y}`;
 }
 
-// ===== deadline "YYYY-MM-DD" =====
+// ===== Helpers về ngày tháng (deadline lưu "YYYY-MM-DD") =====
 function parseYMDToDate(ymd) {
   const [y, m, d] = ymd.split('-').map(Number);
   return new Date(y, m - 1, d);
@@ -53,7 +55,7 @@ function startOfToday() {
 
 function isOverdue(task) {
   if (!task.deadline) return false;
-  if (task.completed) return false; 
+  if (task.completed) return false; // nếu muốn completed vẫn đỏ -> xóa dòng này
   const dl = parseYMDToDate(task.deadline);
   return dl < startOfToday();
 }
@@ -80,7 +82,13 @@ function setActiveFilterButton(activeBtn) {
   activeBtn.classList.add('active');
 }
 
-// ===== display =====
+function priorityLabel(p) {
+  if (p === 'high') return 'High';
+  if (p === 'low') return 'Low';
+  return 'Medium';
+}
+
+// ===== Hiển thị danh sách công việc =====
 function displayTasks() {
   taskList.innerHTML = '';
 
@@ -108,29 +116,37 @@ function displayTasks() {
     if (task.completed) li.classList.add('complete');
     if (isOverdue(task)) li.classList.add('overdue');
 
-    const taskText = document.createElement('span');
+    const left = document.createElement('span');
+    left.style.flex = '1';
 
     const createdText = formatDateTime(task.timestamp);
+    const deadlineText = task.deadline ? formatDateOnly(task.deadline) : '(none)';
+    const p = task.priority || 'medium';
 
-    let deadlineText = ' | Deadline: (none)';
-    if (task.deadline) {
-      deadlineText = ` | Deadline: ${formatDateOnly(task.deadline)}`;
-    }
+    // text chính
+    const textNode = document.createElement('span');
+    textNode.textContent = `${task.text} - Created at: ${createdText} | Deadline: ${deadlineText}`;
+    textNode.addEventListener('click', () => toggleTaskCompletion(realIndex));
 
-    taskText.textContent = `${task.text} - Created at: ${createdText}${deadlineText}`;
-    taskText.addEventListener('click', () => toggleTaskCompletion(realIndex));
+    // badge priority
+    const badge = document.createElement('span');
+    badge.classList.add('badge', p);
+    badge.textContent = `Priority: ${priorityLabel(p)}`;
+
+    left.appendChild(textNode);
+    left.appendChild(badge);
 
     const deleteButton = document.createElement('button');
     deleteButton.textContent = 'Delete';
     deleteButton.addEventListener('click', () => deleteTask(realIndex));
 
-    li.appendChild(taskText);
+    li.appendChild(left);
     li.appendChild(deleteButton);
     taskList.appendChild(li);
   });
 }
 
-// ===== add new =====
+// ===== Thêm công việc mới =====
 addTaskButton.addEventListener('click', () => {
   const taskText = taskInput.value.trim();
   if (!taskText) return;
@@ -139,28 +155,30 @@ addTaskButton.addEventListener('click', () => {
     text: taskText,
     completed: false,
     timestamp: Date.now(),
-    deadline: deadlineInput.value ? deadlineInput.value : null // "YYYY-MM-DD"
+    deadline: deadlineInput.value ? deadlineInput.value : null, // "YYYY-MM-DD"
+    priority: priorityInput ? priorityInput.value : 'medium'     // ✅ priority
   });
 
   taskInput.value = '';
   deadlineInput.value = '';
+  if (priorityInput) priorityInput.value = 'medium';
   saveTasks();
   displayTasks();
 });
 
-// ===== save to LocalStorage =====
+// ===== Lưu công việc vào LocalStorage =====
 function saveTasks() {
   localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// ===== finish =====
+// ===== Đánh dấu công việc là hoàn thành =====
 function toggleTaskCompletion(index) {
   tasks[index].completed = !tasks[index].completed;
   saveTasks();
   displayTasks();
 }
 
-// ===== delete =====
+// ===== Xóa công việc =====
 function deleteTask(index) {
   tasks.splice(index, 1);
   saveTasks();
@@ -174,11 +192,11 @@ sortAscButton.addEventListener('click', () => {
   displayTasks();
 });
 
-/*sortDescButton.addEventListener('click', () => {
+sortDescButton.addEventListener('click', () => {
   tasks.sort((a, b) => b.text.localeCompare(a.text));
   saveTasks();
   displayTasks();
-});*/
+});
 
 sortTimeAscButton.addEventListener('click', () => {
   tasks.sort((a, b) => a.timestamp - b.timestamp);
@@ -186,11 +204,11 @@ sortTimeAscButton.addEventListener('click', () => {
   displayTasks();
 });
 
-/*sortTimeDescButton.addEventListener('click', () => {
+sortTimeDescButton.addEventListener('click', () => {
   tasks.sort((a, b) => b.timestamp - a.timestamp);
   saveTasks();
   displayTasks();
-});*/
+});
 
 // ===== Filters =====
 filterAllBtn.addEventListener('click', () => {
@@ -223,4 +241,5 @@ filterNoneBtn.addEventListener('click', () => {
   displayTasks();
 });
 
+// Hiển thị lại danh sách công việc khi tải lại trang
 displayTasks();

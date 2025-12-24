@@ -15,12 +15,22 @@
       <button id="add-task">Add Task</button>
     </div>
 
-    <div class="deadline-row">
-      <label for="deadline">Deadline:</label>
-      <input type="date" id="deadline" />
+    <div class="meta-row">
+      <div class="deadline-row">
+        <label for="deadline">Deadline:</label>
+        <input type="date" id="deadline" />
+      </div>
+
+      <div class="priority-row">
+        <label for="priority">Priority:</label>
+        <select id="priority">
+          <option value="low">Low</option>
+          <option value="medium" selected>Medium</option>
+          <option value="high">High</option>
+        </select>
+      </div>
     </div>
 
-    <!-- ✅ Filter deadline -->
     <div id="filter-options">
       <button id="filter-all" class="active">All</button>
       <button id="filter-today">Today</button>
@@ -31,9 +41,9 @@
 
     <div id="sort-options">
       <button id="sort-asc">Sort by Name (Asc)</button>
-      <!-- <button id="sort-desc">Sort by Name (Desc)</button> -->
+      <button id="sort-desc">Sort by Name (Desc)</button>
       <button id="sort-time-asc">Sort by Time (Asc)</button>
-      <!-- <button id="sort-time-desc">Sort by Time (Desc)</button> -->
+      <button id="sort-time-desc">Sort by Time (Desc)</button>
     </div>
 
     <ul id="task-list"></ul>
