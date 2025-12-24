@@ -20,11 +20,20 @@
       <input type="date" id="deadline" />
     </div>
 
+    <!-- ✅ Filter deadline -->
+    <div id="filter-options">
+      <button id="filter-all" class="active">All</button>
+      <button id="filter-today">Today</button>
+      <button id="filter-upcoming">Next 7 Days</button>
+      <button id="filter-overdue">Overdue</button>
+      <button id="filter-none">No deadline</button>
+    </div>
+
     <div id="sort-options">
       <button id="sort-asc">Sort by Name (Asc)</button>
-      <button id="sort-desc">Sort by Name (Desc)</button>
+      <!-- <button id="sort-desc">Sort by Name (Desc)</button> -->
       <button id="sort-time-asc">Sort by Time (Asc)</button>
-      <button id="sort-time-desc">Sort by Time (Desc)</button>
+      <!-- <button id="sort-time-desc">Sort by Time (Desc)</button> -->
     </div>
 
     <ul id="task-list"></ul>
