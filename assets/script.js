@@ -1,5 +1,6 @@
 // Lấy các phần tử HTML cần thiết
 const taskInput = document.getElementById('new-task');
+const deadlineInput = document.getElementById('deadline');
 const addTaskButton = document.getElementById('add-task');
 const taskList = document.getElementById('task-list');
 const sortAscButton = document.getElementById('sort-asc');
@@ -17,12 +18,20 @@ function displayTasks() {
   tasks.forEach((task, index) => {
     const li = document.createElement('li');
     li.classList.add('task');
-    if (task.completed) {
-      li.classList.add('complete');
-    }
+    if (task.completed) li.classList.add('complete');
 
     const taskText = document.createElement('span');
-    taskText.textContent = `${task.text} - Created at: ${new Date(task.timestamp).toLocaleString()}`;
+
+    const createdText = new Date(task.timestamp).toLocaleString();
+
+    let deadlineText = ' | Deadline: (none)';
+    if (task.deadline) {
+      // task.deadline lưu dạng "YYYY-MM-DD"
+      const [y, m, d] = task.deadline.split('-');
+      deadlineText = ` | Deadline: ${d}/${m}/${y}`;
+    }
+
+    taskText.textContent = `${task.text} - Created at: ${createdText}${deadlineText}`;
     taskText.addEventListener('click', () => toggleTaskCompletion(index));
 
     const deleteButton = document.createElement('button');
@@ -38,16 +47,20 @@ function displayTasks() {
 // Thêm công việc mới
 addTaskButton.addEventListener('click', () => {
   const taskText = taskInput.value.trim();
-  if (taskText) {
-    tasks.push({
-      text: taskText,
-      completed: false,
-      timestamp: Date.now(),  // Lưu thời gian tạo công việc
-    });
-    taskInput.value = '';
-    saveTasks();
-    displayTasks();
-  }
+  if (!taskText) return;
+
+  tasks.push({
+    text: taskText,
+    completed: false,
+    timestamp: Date.now(),
+    // lưu deadline dạng "YYYY-MM-DD"
+    deadline: deadlineInput.value ? deadlineInput.value : null
+  });
+
+  taskInput.value = '';
+  deadlineInput.value = '';
+  saveTasks();
+  displayTasks();
 });
 
 // Lưu công việc vào LocalStorage
@@ -71,28 +84,28 @@ function deleteTask(index) {
 
 // Sắp xếp công việc theo tên (tăng dần)
 sortAscButton.addEventListener('click', () => {
-  tasks.sort((a, b) => a.text.localeCompare(b.text));  // Sắp xếp theo tên
+  tasks.sort((a, b) => a.text.localeCompare(b.text));
   saveTasks();
   displayTasks();
 });
 
 // Sắp xếp công việc theo tên (giảm dần)
 sortDescButton.addEventListener('click', () => {
-  tasks.sort((a, b) => b.text.localeCompare(a.text));  // Sắp xếp theo tên ngược lại
+  tasks.sort((a, b) => b.text.localeCompare(a.text));
   saveTasks();
   displayTasks();
 });
 
 // Sắp xếp công việc theo thời gian tạo (tăng dần)
 sortTimeAscButton.addEventListener('click', () => {
-  tasks.sort((a, b) => a.timestamp - b.timestamp);  // Sắp xếp theo thời gian tăng dần
+  tasks.sort((a, b) => a.timestamp - b.timestamp);
   saveTasks();
   displayTasks();
 });
 
 // Sắp xếp công việc theo thời gian tạo (giảm dần)
 sortTimeDescButton.addEventListener('click', () => {
-  tasks.sort((a, b) => b.timestamp - a.timestamp);  // Sắp xếp theo thời gian giảm dần
+  tasks.sort((a, b) => b.timestamp - a.timestamp);
   saveTasks();
   displayTasks();
 });

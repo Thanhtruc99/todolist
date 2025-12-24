@@ -1,17 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>To-Do List with Sorting</title>
-  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/style.css" />
 </head>
 <body>
   <div id="todo-app">
     <h1>My To-Do List</h1>
-    
-    <input type="text" id="new-task" placeholder="Enter new task" />
-    <button id="add-task">Add Task</button>
+
+    <div class="add-row">
+      <input type="text" id="new-task" placeholder="Enter new task" />
+      <button id="add-task">Add Task</button>
+    </div>
+
+    <div class="deadline-row">
+      <label for="deadline">Deadline:</label>
+      <input type="date" id="deadline" />
+    </div>
 
     <div id="sort-options">
       <button id="sort-asc">Sort by Name (Asc)</button>
@@ -20,9 +27,7 @@
       <button id="sort-time-desc">Sort by Time (Desc)</button>
     </div>
 
-    <ul id="task-list">
-      <!-- Danh sách công việc sẽ hiển thị ở đây -->
-    </ul>
+    <ul id="task-list"></ul>
   </div>
 
   <script src="assets/script.js"></script>
